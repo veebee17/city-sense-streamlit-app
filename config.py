@@ -5,14 +5,24 @@ from typing import Dict, List
 class Config:
     """Configuration class for the CitySense application"""
     
+    @staticmethod
+    def get_secret(key: str, default: str = None):
+        """Get secret from Streamlit secrets or environment variables"""
+        try:
+            # Try Streamlit secrets first (for cloud deployment)
+            return st.secrets.get(key, default)
+        except:
+            # Fallback to environment variables (for local development)
+            return os.getenv(key, default)
+    
     # Application Settings
-    APP_TITLE = os.getenv('APP_TITLE', 'CitySense')
+    APP_TITLE = get_secret.__func__('APP_TITLE', 'CitySense')
     APP_ICON = "🤖"
     
     # Model Settings
-    DEFAULT_MODEL = os.getenv('DEFAULT_MODEL', 'gpt-3.5-turbo')
-    MAX_TOKENS = int(os.getenv('MAX_TOKENS', '2000'))
-    TEMPERATURE = float(os.getenv('TEMPERATURE', '0.7'))
+    DEFAULT_MODEL = get_secret.__func__('DEFAULT_MODEL', 'gpt-3.5-turbo')
+    MAX_TOKENS = int(get_secret.__func__('MAX_TOKENS', '2000'))
+    TEMPERATURE = float(get_secret.__func__('TEMPERATURE', '0.7'))
     
     # Available Models
     OPENAI_MODELS = [
